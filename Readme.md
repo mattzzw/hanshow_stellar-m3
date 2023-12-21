@@ -62,8 +62,52 @@ Initiate mass erase (adjust serial port accordingly):
 
 # Hardware Findings
 
+## GPIO
+
+| Port | Pin  | Connection |
+|------|------|------------|
+| P1.0 | 29   | EPD: power? |
+| P1.1 | 30   | reed switch, BSL TX  |
+| P1.2 | 31   | LED green |
+| P1.3 | 32   ||
+| P1.4 | 33   ||
+| P1.5 | 34   ||
+| P1.6 | 35   ||
+| P1.7 | 36   ||
+| P2.0 | 6    | LED blue |
+| P2.1 | 7    | |
+| P2.2 | 8    | BSL RX |
+| P2.3 | 27   | EPD: CLK |
+| P2.4 | 28   | EPD: DIN |
+| P2.5 | 40   ||
+| P2.6 | 3    ||
+| P2.7 | 2    ||
+| P3.0 | 9    ||
+| P3.1 | 10   ||
+| P3.2 | 11   ||
+| P3.3 | 12   || 
+| P3.4 | 23   | SPI Flash: SI / UART TX |
+| P3.5 | 24   ||
+| P3.6 | 25   | EPD: D/Cn |
+| P3.7 | 26   | EPD: CSn |
+| P4.0 | 15   | LED red  |
+| P4.1 | 16   | |
+| P4.2 | 17   ||
+| P4.3 | 18   ||
+| P4.4 | 19   | (EPD: HLT?) |
+| P4.5 | 20   | EPD: BS |
+| P4.6 | 21   | EPD: BUSYn |
+| P4.7 | 22   | EPD: RSTn |
+
 ## Serial port
+
 Using the built in UART to get some debugging output on P3.4. This pin is conveniently routed to pin 5 of the SPI flash where a micro clamp can be easily connected to a second USB to serial adapter module.
 
 As the calibration data of the digital controlled oscillator (DCO) has been erased during the mass erase, the intneral clock will run slightly faster therefore configuring the UART needed some tweeking (see code).
 
+# References
+
+- https://github.com/CursedHardware/hanshow/blob/master/HS_EL5101.md
+- https://www.ti.com/product/MSP430G2755 - Datasheet 
+- https://www.ti.com/lit/pdf/slau144 - User's Guide
+- https://www.ti.com/lit/pdf/slau319 - TI BSL User's Guide
