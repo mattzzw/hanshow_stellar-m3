@@ -59,6 +59,20 @@ Initiate mass erase (adjust serial port accordingly):
 - Adjust `PROG_PORT` and `MSPDIR` in `src/Makefile`
 - Execute `make`
 
+The python script `reset_board.py` will toggle the DTR line to - well... reset the board to start the uploaded code.
+
+# Progress so far
+- [x] MCU enters SBL mode
+- [x] mass erase via `mspdebug`
+- [x] cross compiling code
+- [x] upload and code execution
+- [x] LED blinks in RGB :-)
+- [x] Serial debug output on P3.4 to 2nd RS-232 USB module
+- [ ] EPD init
+- [ ] Flash access
+- [ ] Wireless stuff
+
+
 
 # Hardware Findings
 
