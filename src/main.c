@@ -2,14 +2,22 @@
 #include <msp430g2755.h>
 #include <stdint.h>
 
+#include "uart.h"
 
 #define G_LED_PIN BIT2 // Define LED pin as P1.2
 #define B_LED_PIN BIT0 // Define LED pin as P2.0
 #define R_LED_PIN BIT0 // Define LED pin as P4.0
 
+#define FLASH_SCLK_BIT    BIT0    // P3.0 Clock 
+#define FLASH_MOSI_BIT    BIT4    // P3.4 Master Out Slave In
+#define FLASH_MISO_BIT    BIT5    // P3.5 Master In Slave Out
+#define FLASH_CS_BIT      BIT3    // P3.3 Chip Select
+
+
 #define RED_LED   0
 #define BLUE_LED  1
 #define GREEN_LED 2
+
 
 void delay_ms(unsigned int);
 
@@ -17,6 +25,7 @@ void setup(void){
 
     WDTCTL = WDTPW + WDTHOLD;       // Stop the watchdog timer
 
+    // RGB LED
     P1DIR |= G_LED_PIN;               // Set P1.2 as output
     P1OUT |= G_LED_PIN;              // Turn off the LED initially
 
@@ -26,6 +35,11 @@ void setup(void){
     P4DIR |= R_LED_PIN;
     P4OUT |= R_LED_PIN;
 
+    //
+
+    setup_uart();
+
+    #if 0
     // Setup UART, TX on P3.4
     // Not using calibration data as it was erased in mass erase.
     // If CALDCO is being used, adjust UCA0BR0 to 4.
@@ -35,7 +49,6 @@ void setup(void){
     P3SEL |= BIT4;
     P3SEL2 &= BIT4;
 
-#if 1
     UCA0CTL1 |= UCSWRST;
     UCA0CTL0 = 0;
     UCA0CTL1 |= UCSSEL_2;
@@ -44,19 +57,9 @@ void setup(void){
     UCA0BR1 = 0;
     UCA0MCTL = (8 << 4) + UCOS16;
 
-    UCA0CTL1 &= ~UCSWRST;    
-#endif
+    UCA0CTL1 &= ~UCSWRST;   
+    #endif 
 
-}
-
-void print_string(const char *string)
-{
-    while (*string)
-    {
-        UCA0TXBUF = *string++;  // Transmit character
-        while (!(IFG2 & UCA0TXIFG))
-            ;  // Wait for TX buffer to be ready
-    }
 }
 
 void ctrl_rgb_led(unsigned char red, unsigned char green, unsigned char blue) {
@@ -82,7 +85,6 @@ void ctrl_rgb_led(unsigned char red, unsigned char green, unsigned char blue) {
 int main(void)
 {
     setup();
-    print_string("Setup done.\n\r");
 
     while (1)
     {
@@ -92,6 +94,7 @@ int main(void)
         delay_ms(200);               // Delay for a while
         ctrl_rgb_led(0, 0, 1);
         delay_ms(200);               // Delay for a while
+        uart_putstring("Hello, World!\n\r");
     }
 
     return 0;

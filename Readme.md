@@ -24,7 +24,9 @@ Opening the device revealed the following:
 
 ### Physical connection
 
-In order to get a connection to the MCU the uart mode of the BSL is used. A couple of testpoints on the battery side came in handy. 
+Using the MSP430 "JTAG" SBW (spy-by-wire) mode would only use `Test` and `nRST` but I don't have an adapter for this, yet.
+So to get a connection to the MCU the uart mode of the BSL is used here. 
+A couple of testpoints on the battery side come in handy. 
 
 ![pcb bottom](pics/pcb_back.jpg)
 
@@ -68,6 +70,7 @@ The python script `reset_board.py` will toggle the DTR line to - well... reset t
 - [x] upload and code execution
 - [x] LED blinks in RGB :-)
 - [x] Serial debug output on P3.4 to 2nd RS-232 USB module
+- [ ] Software UART on P1.1
 - [ ] EPD init
 - [ ] Flash access
 - [ ] Wireless stuff
@@ -96,12 +99,12 @@ The python script `reset_board.py` will toggle the DTR line to - well... reset t
 | P2.5 | 40   ||
 | P2.6 | 3    ||
 | P2.7 | 2    ||
-| P3.0 | 9    ||
+| P3.0 | 9    | SPI flash: SCLK |
 | P3.1 | 10   ||
 | P3.2 | 11   ||
-| P3.3 | 12   || 
-| P3.4 | 23   | SPI Flash: SI / UART TX |
-| P3.5 | 24   ||
+| P3.3 | 12   | SPI flash: CSn | 
+| P3.4 | 23   | SPI flash: SI / UART TX |
+| P3.5 | 24   | SPI flash: SO |
 | P3.6 | 25   | EPD: D/Cn |
 | P3.7 | 26   | EPD: CSn |
 | P4.0 | 15   | LED red  |
@@ -118,6 +121,8 @@ The python script `reset_board.py` will toggle the DTR line to - well... reset t
 Using the built in UART to get some debugging output on P3.4. This pin is conveniently routed to pin 5 of the SPI flash where a micro clamp can be easily connected to a second USB to serial adapter module.
 
 As the calibration data of the digital controlled oscillator (DCO) has been erased during the mass erase, the intneral clock will run slightly faster therefore configuring the UART needed some tweeking (see code).
+
+However, to get access to the SPI flash and to potentially read out its contents over the serial interface a software UART is used on P1.1.
 
 # References
 
