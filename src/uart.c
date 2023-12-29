@@ -12,14 +12,8 @@ static volatile unsigned int tx_byte;   // Value sent over UART when Transmit() 
 
 void setup_uart(void)
 {
-  WDTCTL = WDTPW + WDTHOLD;                 // Stop WDT
-      
-  //BCSCTL1 = CALBC1_1MHZ;                    // Set range
-  //DCOCTL = CALDCO_1MHZ;      
-  BCSCTL2 = 0; // SMCLK = DCO = 1MHz
-
   P1DIR  |= TXD;                              // output
-  P1SEL  &= ~TXD;                              // P1.1 using timer output
+  P1SEL  &= ~TXD;                             // P1.1 using timer output
   P1OUT |= TXD;
 }
  

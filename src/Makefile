@@ -9,15 +9,17 @@ MSPDIR = /opt/msp430-gcc
 
 CC      = $(MSPDIR)/bin/msp430-elf-gcc
 OBJCOPY = $(MSPDIR)/bin/msp430-elf-objcopy
+SIZE    = $(MSPDIR)/bin/msp430-elf-size
 
 CFLAGS  = -mmcu=msp430g2755 -I$(MSPDIR)/include -Iinclude
 LDFLAGS = -mmcu=msp430g2755 -L$(MSPDIR)/include -Linclude
 
 all: main upload
 
-main: main.o uart.o led.o
+main: main.o uart.o led.o spi.o
 
 hex: main
+	$(SIZE) $<
 	$(OBJCOPY) -O ihex $< $<.hex
 
 upload: hex
@@ -30,3 +32,6 @@ debug:
 
 clean:
 	rm -f *.o *.hex main
+
+image:
+	xxd -r -ps out.cap out.bin
