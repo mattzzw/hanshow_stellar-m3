@@ -17,7 +17,8 @@ Opening the device revealed the following:
 - MCU: TI `MSP430G2755` 
 - Wireless chip: `A7106`
 - SPI flash: `AH1819 25VQ21BT` - 2Mbit/256kB
-- Display: 2.13" 250x150 1bit EPD (Waveshare, SSD1673A/IL3895 based?)
+- Display: 2,13" Hink-E0213A11-A1 212x104 - (called "2.13 e-paper (B) V3" at waveshare - search for EPD_2in13b_V3)
+
 - Reed contact connected to P1.1 
 
 ## MCU Connection via Bootstrap Loader (BSL)
@@ -71,8 +72,8 @@ The python script `reset_board.py` will toggle the DTR line to - well... reset t
 - [x] LED blinks in RGB :-)
 - [x] Serial debug output on P3.4 to 2nd RS-232 USB module
 - [x] Software UART on P1.1
-- [ ] EPD init
 - [x] Flash access
+- [ ] EPD access
 - [ ] Wireless stuff
 
 

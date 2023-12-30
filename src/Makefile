@@ -16,7 +16,7 @@ LDFLAGS = -mmcu=msp430g2755 -L$(MSPDIR)/include -Linclude
 
 all: main upload
 
-main: main.o uart.o led.o spi.o
+main: main.o uart.o led.o spi.o epd.o
 
 hex: main
 	$(SIZE) $<
@@ -28,10 +28,13 @@ upload: hex
 
 debug: 
 	$(MSPDEBUG) -d $(PROG_PORT) rom-bsl --bsl-entry-sequence Dr,R,r,R,r,d 
-	./reset_board.py -d ($PROG_PORT)
+	./reset_board.py -d $(PROG_PORT)
 
 clean:
 	rm -f *.o *.hex main
 
 image:
 	xxd -r -ps out.cap out.bin
+
+reset:
+	./reset_board.py -d $(PROG_PORT)

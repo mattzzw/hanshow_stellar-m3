@@ -7,6 +7,7 @@
 #include "led.h"
 #include "spi.h"
 #include "board.h"
+#include "epd.h"
 
 
 void delay_ms(unsigned int);
@@ -20,6 +21,8 @@ void setup(void)
     setup_rgb_led();
     setup_uart();
     setup_spi();
+    epd_setup_pins();
+
 }
 
  
@@ -28,17 +31,22 @@ int main(void)
     uint8_t str[128];
 
     setup();
-
-    //uart_putstring("Hello, World!\n\r");
-    //sprintf(str, "Devide ID: 0x%02x\r\n", spi_release_pwrdn_get_dev_id());
+    toggle_led('r');
+    delay_ms(500);
+    toggle_led('r');
+    uart_putstring("Hello, World!\n\r");
+    sprintf(str, "Flash devide ID: 0x%02x\r\n", spi_release_pwrdn_get_dev_id());
     //uart_putstring(str);
-    dump_flash();
+    //dump_flash();
+
+    epd_reset();
+    epd_init();
 
     while (1)
     {          
-        set_rgb_led(1, 1, 1);    
-        return 0;   
+        //set_rgb_led(1, 1, 1);    
     }
+    return 0;   
 }
 
 // ---------------------------------------------------
@@ -52,23 +60,24 @@ void delay_ms(unsigned int d)
 
 void dump_flash(void)
 {
-    u_int8_t data[128];
+    u_int16_t chunk_size = 256;
+    u_int8_t data[chunk_size];
     uint8_t str[128];
     u_int16_t i;
     u_int32_t a;
 
-    for(a = 0; a < (256L * 1024L); a=a+128){
-            spi_read(a, data, 128);
+    for(a = 0; a < (256L * 1024L); a=a+chunk_size){
+            spi_read(a, data, chunk_size);
 
-            for(i = 0; i < 128; i++){
-                if( i % 8 == 0){
+            for(i = 0; i < chunk_size; i++){
+                if( i % 16 == 0){
                     uart_putstring("\r\n");
-                    sprintf(str, "0x%05lx: ", i+a);
-                    uart_putstring(str);
                 }
-                sprintf(str, "0x%02x ", data[i]);
+                sprintf(str, "%02x ", data[i]);
                 uart_putstring(str);
             }
             toggle_led('r');
         }
+    uart_putstring("\r\n");
+
 }
