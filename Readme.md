@@ -80,8 +80,6 @@ The python script `reset_board.py` will toggle the DTR line to - well... reset t
 
 # Hardware Findings
 
-![epd annotated](pics/epd-interface-annotated.png)
-
 ## GPIO
 
 | Port | Pin  | Connection |
@@ -119,6 +117,11 @@ The python script `reset_board.py` will toggle the DTR line to - well... reset t
 | P4.6 | 21   | EPD: BUSYn |
 | P4.7 | 22   | EPD: RSTn |
 
+
+I'm not too sure about the EPD pins yet.
+
+![epd annotated](pics/epd-interface-annotated.png)
+
 ## Serial port
 
 Using the built in UART to get some debugging output on P3.4. This pin is conveniently routed to pin 5 of the SPI flash where a micro clamp can be easily connected to a second USB to serial adapter module.
@@ -127,7 +130,9 @@ As the calibration data of the digital controlled oscillator (DCO) has been eras
 
 However, to get access to the SPI flash and to potentially read out its contents over the serial interface a software UART is used on P1.1.
 
-The retrieved flash image shows some graphics contents ![flash contents](pics/flash.png)
+The retrieved flash image shows some graphics contents.
+
+ ![flash contents](pics/flash.png)
 
 # References
 
