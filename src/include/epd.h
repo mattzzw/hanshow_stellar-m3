@@ -30,3 +30,4 @@ void epd_send_data(const uint8_t);
 void epd_write(const uint8_t);
 void epd_spi_write(const uint8_t);
 void epd_wait_busy(void);
+void epd_clear_disp(void);

@@ -112,7 +112,7 @@ The python script `reset_board.py` will toggle the DTR line to - well... reset t
 | P4.1 | 16   | |
 | P4.2 | 17   ||
 | P4.3 | 18   ||
-| P4.4 | 19   | (EPD: HLT?) |
+| P4.4 | 19   ||
 | P4.5 | 20   | EPD: BS |
 | P4.6 | 21   | EPD: BUSYn |
 | P4.7 | 22   | EPD: RSTn |

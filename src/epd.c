@@ -21,7 +21,7 @@ void epd_setup_pins(void)
 void epd_reset(void)
 {
     EPD_BS1_PORT &= ~EPD_BS1_PIN;  // 4 wire bus
-    EPD_PWR_PORT |= EPD_PWR_PIN;  // switch on pwr
+    EPD_PWR_PORT &= ~EPD_PWR_PIN;  // switch on pwr 
     EPD_RST_PORT |= EPD_RST_PIN;
     delay_ms(200);
     EPD_RST_PORT &= ~EPD_RST_PIN;  // reset 
@@ -74,8 +74,10 @@ void epd_spi_write(const uint8_t data)
     for (bit = 0x80; bit > 0; bit >>= 1) {
         if (data & bit) {
             EPD_DIN_PORT |= EPD_DIN_PIN;  // Set MOSI high
+            G_LED_PORT |= G_LED_PIN;
         } else {
             EPD_DIN_PORT &= ~EPD_DIN_PIN; // Set MOSI low
+            G_LED_PORT &= !G_LED_PIN;
         }
 
         EPD_CLK_PORT &= ~EPD_CLK_PIN;      // Set Clock low
@@ -110,4 +112,20 @@ void epd_wait_busy(void)
         toggle_led('g');
     }
        
+}
+
+void epd_clear_disp(void)
+{
+    epd_send_cmd(0x10);           
+    for(int i = 0; i < EPD_WIDTH * EPD_HEIGHT / 8; i++) {
+        epd_send_data(0xFF);  
+    }  
+    delay_ms(2);
+    epd_send_cmd(0x13);
+    for(int i = 0; i < EPD_WIDTH * EPD_HEIGHT / 8; i++) {
+        epd_send_data(0xFF);  
+    }
+    epd_send_cmd(0x12);
+    delay_ms(100);
+    epd_wait_busy();
 }

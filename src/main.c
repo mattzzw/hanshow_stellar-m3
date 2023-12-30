@@ -8,9 +8,6 @@
 #include "spi.h"
 #include "epd.h"
 
-void delay_ms(unsigned int);
-void dump_flash(void);
-
 void setup(void)
 {
     WDTCTL = WDTPW + WDTHOLD;       // Stop the watchdog timer
@@ -39,6 +36,7 @@ int main(void)
 
     epd_reset();
     epd_init();
+    epd_clear_disp();
 
     while (1)
     {          
