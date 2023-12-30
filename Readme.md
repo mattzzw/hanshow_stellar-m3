@@ -80,6 +80,8 @@ The python script `reset_board.py` will toggle the DTR line to - well... reset t
 
 # Hardware Findings
 
+![epd annotated](pics/epd-interface-annotated.png)
+
 ## GPIO
 
 | Port | Pin  | Connection |
@@ -124,6 +126,8 @@ Using the built in UART to get some debugging output on P3.4. This pin is conven
 As the calibration data of the digital controlled oscillator (DCO) has been erased during the mass erase, the intneral clock will run slightly faster therefore configuring the UART needed some tweeking (see code).
 
 However, to get access to the SPI flash and to potentially read out its contents over the serial interface a software UART is used on P1.1.
+
+The retrieved flash image shows some graphics contents ![flash contents](pics/flash.png)
 
 # References
 
