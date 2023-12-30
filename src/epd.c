@@ -3,18 +3,35 @@
 #include "epd.h"
 #include "led.h"
 #include "tools.h"
+#include "uart.h"
 
 void epd_setup_pins(void)
 {
     //PxSEL are 0 after reset
     
+    // // we are going to use P1.0 as gate driver for the charge pump
+    // // Configure Timer_A
+    // TA0CCR0 = 0;                     // Stop timer
+    // TA0CCTL0 |= CCIE;                // Enable interrupt for CCR0
+    // TA0CTL = TASSEL_2 | MC_1 | ID_2; // Use SMCLK, Up mode, no division
+
+    // __enable_interrupt();
+    // _BIS_SR( GIE); //ENABLE GLOBAL INTERRRUPTS
+
+    // TA0CCR0 = 1000; // start timer
+
+    // configure pin directions
     P1DIR |= EPD_PWR_PIN;
     P2DIR |= EPD_DIN_PIN;
     P2DIR |= EPD_CLK_PIN;
     P3DIR |= EPD_CSN_PIN;
     P3DIR |= EPD_DCn_PIN;
     P4DIR |= EPD_RST_PIN;
+
     P4DIR &= ~EPD_BUS_PIN; // input
+    P4REN |= EPD_BUS_PIN;  // enable pullup/down
+    P4OUT |= EPD_BUS_PIN;  // pull-up
+    
     P4DIR |= EPD_BS1_PIN;
 }
 
@@ -44,17 +61,15 @@ void epd_init(void)
 
     epd_send_cmd(0x00);  // panel setting
     epd_send_data(0x0f);
-    epd_send_data(0x89);
 
     epd_send_cmd(0x61);   // resolution setting
-    epd_send_data(0x68);
+    epd_send_data(0x60);
     epd_send_data(0x00);
-    epd_send_data(0xd4);  
+    epd_send_data(0xcb);  
 
     epd_send_cmd(0x50);   // VCOM 
-    epd_send_data(0x87);  
+    epd_send_data(0xd7);  
 
-    epd_send_cmd(0x12); // refresh
 }
 
 void epd_sleep(void) 
@@ -74,17 +89,20 @@ void epd_spi_write(const uint8_t data)
     for (bit = 0x80; bit > 0; bit >>= 1) {
         if (data & bit) {
             EPD_DIN_PORT |= EPD_DIN_PIN;  // Set MOSI high
-            G_LED_PORT |= G_LED_PIN;
+            B_LED_PORT |= B_LED_PIN;
         } else {
             EPD_DIN_PORT &= ~EPD_DIN_PIN; // Set MOSI low
-            G_LED_PORT &= !G_LED_PIN;
+            B_LED_PORT &= ~B_LED_PIN;
         }
 
         EPD_CLK_PORT &= ~EPD_CLK_PIN;      // Set Clock low
-        __delay_cycles(2);
+        G_LED_PORT &= ~G_LED_PIN;
+        __delay_cycles(1);
         EPD_CLK_PORT |= EPD_CLK_PIN;     // Set Clock high
-        __delay_cycles(2);
+        G_LED_PORT |= G_LED_PIN;
+        __delay_cycles(1);
     }
+
 }
 
 void epd_write(const uint8_t val)
@@ -102,30 +120,36 @@ void epd_send_cmd(const uint8_t cmd)
 
 void epd_send_data(const uint8_t data)
 {
-    EPD_DCn_PORT |= EPD_DCn_PIN;
+    EPD_DCn_PORT |= EPD_DCn_PIN;  // data
     epd_write(data);
 }
 
 void epd_wait_busy(void)
 {
+        
+    uart_putstring("EPD busy...\r\n");
     while( (EPD_BUS_PORT & EPD_BUS_PIN) != 0){
-        toggle_led('g');
-    }
+        }
+    uart_putstring("EPD not busy.\r\n");
        
 }
 
 void epd_clear_disp(void)
 {
+    uart_putstring("EPD writing data...\r\n");
+
     epd_send_cmd(0x10);           
     for(int i = 0; i < EPD_WIDTH * EPD_HEIGHT / 8; i++) {
         epd_send_data(0xFF);  
     }  
+    uart_putstring("Done.\r\n");
     delay_ms(2);
-    epd_send_cmd(0x13);
-    for(int i = 0; i < EPD_WIDTH * EPD_HEIGHT / 8; i++) {
-        epd_send_data(0xFF);  
-    }
+    // epd_send_cmd(0x13);
+    // for(int i = 0; i < EPD_WIDTH * EPD_HEIGHT / 8; i++) {
+    //     epd_send_data(0xFF);  
+    // }
     epd_send_cmd(0x12);
     delay_ms(100);
     epd_wait_busy();
 }
+

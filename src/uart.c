@@ -1,5 +1,5 @@
 /******************************************************************************
- * Bit-banged super simple version of an I-just-need-debug-output-UART-TX
+ * TIMER A based super simple version of an I-just-need-debug-output-UART-TX
  * 
  ******************************************************************************/
    
@@ -13,7 +13,7 @@ static volatile unsigned int tx_byte;   // Value sent over UART when Transmit() 
 void setup_uart(void)
 {
   P1DIR  |= TXD;                              // output
-  P1SEL  &= ~TXD;                             // P1.1 using timer output
+  P1SEL  &= ~TXD;                             // P1.1 I/O
   P1OUT |= TXD;
 }
  
@@ -46,4 +46,12 @@ void uart_putstring(const char *string)
 }
 
 
+// Timer A0 interrupt service routine
+
+__attribute__ ( ( interrupt( TIMER0_A0_VECTOR ) ) )
+void TIMER1_A0_ISR( void )
+{
+    P1OUT ^= BIT0; // Toggle P1.0 (LED)
+    //toggle_led('b');
+}
 

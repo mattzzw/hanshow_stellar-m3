@@ -1,8 +1,8 @@
 #include <stdint.h>
 #include "msp430.h"
 
-#define EPD_WIDTH   250
-#define EPD_HEIGHT  122
+#define EPD_WIDTH   212
+#define EPD_HEIGHT  104
 
 #define EPD_PWR_PORT    P1OUT
 #define EPD_DIN_PORT    P2OUT
@@ -31,3 +31,4 @@ void epd_write(const uint8_t);
 void epd_spi_write(const uint8_t);
 void epd_wait_busy(void);
 void epd_clear_disp(void);
+void epd_sleep(void);

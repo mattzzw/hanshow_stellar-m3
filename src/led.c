@@ -25,7 +25,7 @@ void set_rgb_led(unsigned char red, unsigned char green, unsigned char blue) {
     }
 
     if (blue > 0) {
-        B_LED_PORT &= ~G_LED_PIN;  // Turn on blue LED
+        B_LED_PORT &= ~B_LED_PIN;  // Turn on blue LED
     } else {
         B_LED_PORT |= B_LED_PIN; // Turn off blue LED
     }
