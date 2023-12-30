@@ -16,7 +16,7 @@ LDFLAGS = -mmcu=msp430g2755 -L$(MSPDIR)/include -Linclude
 
 all: main upload
 
-main: main.o uart.o led.o spi.o epd.o
+main: main.o uart.o led.o spi.o epd.o tools.o
 
 hex: main
 	$(SIZE) $<

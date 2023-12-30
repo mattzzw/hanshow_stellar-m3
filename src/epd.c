@@ -2,6 +2,7 @@
 #include "msp430.h"
 #include "epd.h"
 #include "led.h"
+#include "tools.h"
 
 void epd_setup_pins(void)
 {
@@ -20,51 +21,50 @@ void epd_setup_pins(void)
 void epd_reset(void)
 {
     EPD_BS1_PORT &= ~EPD_BS1_PIN;  // 4 wire bus
-    EPD_PWR_PORT &= ~EPD_PWR_PIN;  // switch on pwr
-    EPD_RST_PORT &= ~EPD_RST_PIN;  // reset 
-    __delay_cycles(0x32);
+    EPD_PWR_PORT |= EPD_PWR_PIN;  // switch on pwr
     EPD_RST_PORT |= EPD_RST_PIN;
-    __delay_cycles(0x32);
+    delay_ms(200);
+    EPD_RST_PORT &= ~EPD_RST_PIN;  // reset 
+    delay_ms(10);
+    EPD_RST_PORT |= EPD_RST_PIN;
+    delay_ms(200);
 
 }
 
 void epd_init(void)
 {
+    epd_send_cmd(0x06); // booster soft start
+    epd_send_data(0x17);
+    epd_send_data(0x17);
+    epd_send_data(0x17);
+
     epd_wait_busy();
-    epd_send_cmd(0x12);  // soft reset
+    epd_send_cmd(0x04);  // power on
     epd_wait_busy();
 
-    epd_send_cmd(0x06);  // driver output ctrl
-    epd_send_data(0x17);
-    epd_send_data(0x17);
-    epd_send_data(0x17);
-
-    epd_send_cmd(0x11);   // data entry mode
-    epd_send_data(0x01);
-
-    epd_send_cmd(0x44);   // RAM-x addr start pos
-    epd_send_data(0x00);
-    epd_send_data(0x0f);  //0x0C-->(15+1)*8=128
-
-    epd_send_cmd(0x45);   // RAM-y addr start pos
-    epd_send_data(0xf9);  //0xF9-->(249+1)=250
-    epd_send_data(0x00);
-    epd_send_data(0x00);
-
-    epd_send_cmd(0x3c);   // border waveform 
-    epd_send_data(0xc0);
-
-    epd_send_cmd(0x0c);  // soft start
-    epd_send_data(0x8b);
-    epd_send_data(0x9c);
-    epd_send_data(0x96);
+    epd_send_cmd(0x00);  // panel setting
     epd_send_data(0x0f);
+    epd_send_data(0x89);
 
-    epd_send_cmd(0x20);   // master update
+    epd_send_cmd(0x61);   // resolution setting
+    epd_send_data(0x68);
+    epd_send_data(0x00);
+    epd_send_data(0xd4);  
 
+    epd_send_cmd(0x50);   // VCOM 
+    epd_send_data(0x87);  
 
+    epd_send_cmd(0x12); // refresh
+}
 
-
+void epd_sleep(void) 
+{
+    epd_send_cmd(0x50);
+    epd_send_data(0xf7);
+    epd_send_cmd(0X02);//power off
+    epd_wait_busy();//waiting for the electronic paper IC to release the idle signal
+    epd_send_cmd(0X07);//deep sleep
+    epd_send_data(0xA5);
 }
 
 void epd_spi_write(const uint8_t data)
