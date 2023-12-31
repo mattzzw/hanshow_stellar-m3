@@ -18,8 +18,49 @@ Opening the device revealed the following:
 - Wireless chip: `A7106`
 - SPI flash: `AH1819 25VQ21BT` - 2Mbit/256kB
 - Display: 2,13" Hink-E0213A11-A1 212x104 - (called "2.13 e-paper (B) V3" at waveshare - search for EPD_2in13b_V3)
-
 - Reed contact connected to P1.1 
+
+![pcb top](pics/pcb_top.png)
+
+## GPIO
+
+| Port | Pin  | Connection |
+|------|------|------------|
+| P1.0 | 29   | EPD: power? |
+| P1.1 | 30   | reed switch, BSL TX  |
+| P1.2 | 31   | LED green |
+| P1.3 | 32   | switches Q6, radio pwr?|
+| P1.4 | 33   | Radio: RFIO2 |
+| P1.5 | 34   | Radio: RFIO1 |
+| P1.6 | 35   | Radio: RFDA |
+| P1.7 | 36   | Radio: RFCK |
+| P2.0 | 6    | LED blue |
+| P2.1 | 7    | CS |
+| P2.2 | 8    | BSL RX |
+| P2.3 | 27   | EPD: CLK |
+| P2.4 | 28   | EPD: DIN |
+| P2.5 | 40   | Radio: RFCS |
+| P2.6 | 3    | ??? |
+| P2.7 | 2    | ??? |
+| P3.0 | 9    | SPI flash: SCLK |
+| P3.1 | 10   | ?? I2C for unpopulated U4? |
+| P3.2 | 11   | ?? I2C for unpopulated U4?|
+| P3.3 | 12   | SPI flash: CSn | 
+| P3.4 | 23   | SPI flash: SI / UART TX |
+| P3.5 | 24   | SPI flash: SO |
+| P3.6 | 25   | EPD: D/Cn |
+| P3.7 | 26   | EPD: CSn |
+| P4.0 | 15   | LED red  |
+| P4.1 | 16   | DA Pad backside |
+| P4.2 | 17   | CK Pad backside |
+| P4.3 | 18   | ??? |
+| P4.4 | 19   | ??? |
+| P4.5 | 20   | EPD: BS |
+| P4.6 | 21   | EPD: BUSYn |
+| P4.7 | 22   | EPD: RSTn |
+
+
+
 
 ## MCU Connection via Bootstrap Loader (BSL)
 
@@ -30,8 +71,6 @@ So to get a connection to the MCU the uart mode of the BSL is used here.
 A couple of testpoints on the battery side come in handy. 
 
 ![pcb bottom](pics/pcb_back.jpg)
-
-![pcb top](pics/pcb_top.jpg)
 
 | Module | Location | RS-232 |
 |--------|----|-------|
@@ -64,7 +103,7 @@ Initiate mass erase (adjust serial port accordingly):
 
 The python script `reset_board.py` will toggle the DTR line to - well... reset the board to start the uploaded code.
 
-# Progress so far
+## Progress so far
 - [x] MCU enters SBL mode
 - [x] mass erase via `mspdebug`
 - [x] cross compiling code
@@ -76,51 +115,6 @@ The python script `reset_board.py` will toggle the DTR line to - well... reset t
 - [ ] EPD access
 - [ ] Wireless stuff
 
-
-
-# Hardware Findings
-
-## GPIO
-
-| Port | Pin  | Connection |
-|------|------|------------|
-| P1.0 | 29   | EPD: power? |
-| P1.1 | 30   | reed switch, BSL TX  |
-| P1.2 | 31   | LED green |
-| P1.3 | 32   ||
-| P1.4 | 33   ||
-| P1.5 | 34   ||
-| P1.6 | 35   ||
-| P1.7 | 36   ||
-| P2.0 | 6    | LED blue |
-| P2.1 | 7    | |
-| P2.2 | 8    | BSL RX |
-| P2.3 | 27   | EPD: CLK |
-| P2.4 | 28   | EPD: DIN |
-| P2.5 | 40   ||
-| P2.6 | 3    ||
-| P2.7 | 2    ||
-| P3.0 | 9    | SPI flash: SCLK |
-| P3.1 | 10   ||
-| P3.2 | 11   ||
-| P3.3 | 12   | SPI flash: CSn | 
-| P3.4 | 23   | SPI flash: SI / UART TX |
-| P3.5 | 24   | SPI flash: SO |
-| P3.6 | 25   | EPD: D/Cn |
-| P3.7 | 26   | EPD: CSn |
-| P4.0 | 15   | LED red  |
-| P4.1 | 16   | |
-| P4.2 | 17   ||
-| P4.3 | 18   ||
-| P4.4 | 19   ||
-| P4.5 | 20   | EPD: BS |
-| P4.6 | 21   | EPD: BUSYn |
-| P4.7 | 22   | EPD: RSTn |
-
-
-I'm not too sure about the EPD pins yet.
-
-![epd annotated](pics/epd-interface-annotated.png)
 
 ## Serial port
 
