@@ -33,6 +33,19 @@ void epd_setup_pins(void)
     P4OUT |= EPD_BUS_PIN;  // pull-up
     
     P4DIR |= EPD_BS1_PIN;
+
+    // switching Q6
+    //P1DIR |= BIT3;
+    //P1OUT |= BIT3;
+
+    // debug pins
+    // P1DIR |= BIT4;
+    // P1DIR |= BIT5;
+    // P1SEL &= ~BIT4;
+    // P1SEL &= ~BIT5;
+ 
+    // P1OUT &= ~BIT4;
+    // P1OUT &= ~BIT5;
 }
 
 void epd_reset(void)
@@ -50,13 +63,48 @@ void epd_reset(void)
 
 void epd_init(void)
 {
+#if 0
+// lut from register
     epd_send_cmd(0x06); // booster soft start
     epd_send_data(0x17);
     epd_send_data(0x17);
     epd_send_data(0x17);
 
-    epd_wait_busy();
+    epd_send_cmd(0x01);  // power settings
+    epd_send_data(0x03);
+    epd_send_data(0x00);
+    epd_send_data(0x2b);
+    epd_send_data(0x2b);
+    epd_send_data(0x09);
+
     epd_send_cmd(0x04);  // power on
+    delay_ms(100);
+    epd_wait_busy();
+
+    epd_send_cmd(0x00);  // panel setting
+    epd_send_data(0xaf);
+
+    epd_send_cmd(0x30);  // PLL control
+    epd_send_data(0x3a);
+
+    epd_send_cmd(0x61);   // resolution setting
+    epd_send_data(0x68);
+    epd_send_data(0x00);
+    epd_send_data(0xd4);  
+
+    epd_send_cmd(0x82);   // VCM_DC setting
+    epd_send_data(0x12);
+#endif     
+
+// lut from OTP
+#if 1
+    epd_send_cmd(0x06); // booster soft start
+    epd_send_data(0x17);
+    epd_send_data(0x17);
+    epd_send_data(0x17);
+
+    epd_send_cmd(0x04);  // power on
+    delay_ms(100);
     epd_wait_busy();
 
     epd_send_cmd(0x00);  // panel setting
@@ -69,7 +117,7 @@ void epd_init(void)
 
     epd_send_cmd(0x50);   // VCOM 
     epd_send_data(0xd7);  
-
+#endif
 }
 
 void epd_sleep(void) 
@@ -89,49 +137,53 @@ void epd_spi_write(const uint8_t data)
     for (bit = 0x80; bit > 0; bit >>= 1) {
         if (data & bit) {
             EPD_DIN_PORT |= EPD_DIN_PIN;  // Set MOSI high
-            B_LED_PORT |= B_LED_PIN;
+            //P1OUT |= BIT4;
         } else {
             EPD_DIN_PORT &= ~EPD_DIN_PIN; // Set MOSI low
-            B_LED_PORT &= ~B_LED_PIN;
+            //P1OUT &= ~BIT4;
         }
-
-        EPD_CLK_PORT &= ~EPD_CLK_PIN;      // Set Clock low
-        G_LED_PORT &= ~G_LED_PIN;
-        __delay_cycles(1);
+        __delay_cycles(5);
         EPD_CLK_PORT |= EPD_CLK_PIN;     // Set Clock high
-        G_LED_PORT |= G_LED_PIN;
-        __delay_cycles(1);
+        //P1OUT|= BIT5;
+        __delay_cycles(5);
+        EPD_CLK_PORT &= ~EPD_CLK_PIN;      // Set Clock low
+        //P1OUT&=~BIT5;
+        __delay_cycles(5);
     }
-
 }
 
 void epd_write(const uint8_t val)
 {
     EPD_CSN_PORT &= ~EPD_CSN_PIN;
+    __delay_cycles(1);
     epd_spi_write(val);
+    __delay_cycles(1);
     EPD_CSN_PORT |= EPD_CSN_PIN;
 }
 
 void epd_send_cmd(const uint8_t cmd)
 {
     EPD_DCn_PORT &= ~EPD_DCn_PIN; // command
+    __delay_cycles(1);
     epd_write(cmd);
 }
 
 void epd_send_data(const uint8_t data)
 {
     EPD_DCn_PORT |= EPD_DCn_PIN;  // data
+    __delay_cycles(1);
     epd_write(data);
 }
 
 void epd_wait_busy(void)
 {
-        
-    uart_putstring("EPD busy...\r\n");
+    epd_send_cmd(0x71);
     while( (EPD_BUS_PORT & EPD_BUS_PIN) != 0){
+        epd_send_cmd(0x71);
+        uart_putc('.');
+        delay_ms(100);
         }
-    uart_putstring("EPD not busy.\r\n");
-       
+    delay_ms(200);   
 }
 
 void epd_clear_disp(void)
@@ -140,16 +192,27 @@ void epd_clear_disp(void)
 
     epd_send_cmd(0x10);           
     for(int i = 0; i < EPD_WIDTH * EPD_HEIGHT / 8; i++) {
-        epd_send_data(0xFF);  
+        epd_send_data(0x0F);  
     }  
-    uart_putstring("Done.\r\n");
+    uart_putstring("b/w done.\r\n");
     delay_ms(2);
-    // epd_send_cmd(0x13);
-    // for(int i = 0; i < EPD_WIDTH * EPD_HEIGHT / 8; i++) {
-    //     epd_send_data(0xFF);  
-    // }
+    epd_send_cmd(0x13);
+    for(int i = 0; i < EPD_WIDTH * EPD_HEIGHT / 8; i++) {
+        epd_send_data(0xF0);  
+    }
+    uart_putstring("r done.\r\n");
+    uart_putstring("Refreshing...\r\n");
     epd_send_cmd(0x12);
     delay_ms(100);
     epd_wait_busy();
+
 }
 
+// // Timer A0 interrupt service routine
+
+// __attribute__ ( ( interrupt( TIMER0_A0_VECTOR ) ) )
+// void TIMER1_A0_ISR( void )
+// {
+//     P1OUT ^= BIT0; // Toggle P1.0 (LED)
+//     //toggle_led('b');
+// }

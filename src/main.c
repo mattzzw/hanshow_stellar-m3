@@ -20,8 +20,9 @@ void setup(void)
     // toggle_led('r');
 
     setup_uart();
-    setup_spi();
+    //setup_spi();
     epd_setup_pins();
+
 }
 
  
@@ -44,7 +45,8 @@ int main(void)
 
 
     while (1)
-    {          
+    {    
+      
         toggle_led('r');
         delay_ms(500);
     }
@@ -55,12 +57,4 @@ int main(void)
 
 // ---------------------------------------------------
 
-// Timer A0 interrupt service routine
-
-__attribute__ ( ( interrupt( TIMER0_A0_VECTOR ) ) )
-void TIMER1_A0_ISR( void )
-{
-    P1OUT ^= BIT0; // Toggle P1.0 (LED)
-    //toggle_led('b');
-}
 

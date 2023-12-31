@@ -1,8 +1,8 @@
 #include  "msp430.h"
 #include <stdint.h>
 
-#define     TXD       BIT1   // TXD on P1.1
-#define BAUD_19200  20 // roughly checked with scope, good enough for 1.05MHz MCLK
+#define TXD         BIT1    // TXD on P1.1
+#define BAUD_19200  20      // roughly checked with scope, good enough for 1.05MHz MCLK
 #define BAUD_9600   80
   
 // Function Definitions
