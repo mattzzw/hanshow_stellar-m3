@@ -1,8 +1,8 @@
 #include <stdint.h>
 #include "msp430.h"
 
-#define EPD_WIDTH   212
-#define EPD_HEIGHT  104
+#define EPD_HEIGHT      212
+#define EPD_WIDTH       104
 
 #define EPD_PWR_PORT    P1OUT
 #define EPD_DIN_PORT    P2OUT

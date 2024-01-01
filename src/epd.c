@@ -34,6 +34,8 @@ void epd_setup_pins(void)
     
     P4DIR |= EPD_BS1_PIN;
 
+ 
+
     // switching Q6
     //P1DIR |= BIT3;
     //P1OUT |= BIT3;
@@ -50,11 +52,23 @@ void epd_setup_pins(void)
 
 void epd_reset(void)
 {
-    EPD_BS1_PORT &= ~EPD_BS1_PIN;  // 4 wire bus
-    EPD_PWR_PORT &= ~EPD_PWR_PIN;  // switch on pwr 
+    // power up
+    EPD_PWR_PORT &= ~EPD_PWR_PIN;  
+
+   // pre reset init
+    EPD_RST_PORT |= EPD_RST_PIN;
+    EPD_DCn_PORT |= EPD_DCn_PIN;
+    EPD_DIN_PORT |= EPD_DIN_PIN;
+    EPD_CLK_PORT |= EPD_CLK_PIN;
+    EPD_CSN_PORT |= EPD_CSN_PIN;
+
+    // 4 wire bus
+    EPD_BS1_PORT &= ~EPD_BS1_PIN;  
+    delay_ms(5);
+    // reset
     EPD_RST_PORT |= EPD_RST_PIN;
     delay_ms(200);
-    EPD_RST_PORT &= ~EPD_RST_PIN;  // reset 
+    EPD_RST_PORT &= ~EPD_RST_PIN;  
     delay_ms(10);
     EPD_RST_PORT |= EPD_RST_PIN;
     delay_ms(200);
@@ -63,41 +77,45 @@ void epd_reset(void)
 
 void epd_init(void)
 {
-#if 0
-// lut from register
-    epd_send_cmd(0x06); // booster soft start
-    epd_send_data(0x17);
-    epd_send_data(0x17);
-    epd_send_data(0x17);
+#if 1
+// lut from OTP
+// https://github.com/waveshareteam/Pico_ePaper_Code/blob/main/c/lib/e-Paper/EPD_2in13d.c
 
     epd_send_cmd(0x01);  // power settings
     epd_send_data(0x03);
     epd_send_data(0x00);
     epd_send_data(0x2b);
     epd_send_data(0x2b);
-    epd_send_data(0x09);
+    epd_send_data(0x03);
+
+    epd_send_cmd(0x06); // booster soft start
+    epd_send_data(0x17);
+    epd_send_data(0x17);
+    epd_send_data(0x17);
 
     epd_send_cmd(0x04);  // power on
-    delay_ms(100);
     epd_wait_busy();
 
     epd_send_cmd(0x00);  // panel setting
-    epd_send_data(0xaf);
+    epd_send_data(0xbf);  //LUT from OTP，128x296
+    epd_send_data(0x0e);  //VCOM to 0V fast
 
     epd_send_cmd(0x30);  // PLL control
-    epd_send_data(0x3a);
+    epd_send_data(0x3a); // 3a 100HZ   29 150Hz 39 200HZ	31 171HZ
 
     epd_send_cmd(0x61);   // resolution setting
-    epd_send_data(0x68);
-    epd_send_data(0x00);
-    epd_send_data(0xd4);  
+    epd_send_data(EPD_WIDTH);
+    epd_send_data((EPD_HEIGHT >> 8) & 0xff);
+    epd_send_data(EPD_HEIGHT & 0xff);  
 
     epd_send_cmd(0x82);   // VCM_DC setting
-    epd_send_data(0x12);
+    epd_send_data(0x28);
+
+
 #endif     
 
 // lut from OTP
-#if 1
+#if 0
     epd_send_cmd(0x06); // booster soft start
     epd_send_data(0x17);
     epd_send_data(0x17);
@@ -194,14 +212,17 @@ void epd_clear_disp(void)
     for(int i = 0; i < EPD_WIDTH * EPD_HEIGHT / 8; i++) {
         epd_send_data(0x0F);  
     }  
-    uart_putstring("b/w done.\r\n");
+    uart_putstring("old data done.\r\n");
     delay_ms(2);
     epd_send_cmd(0x13);
     for(int i = 0; i < EPD_WIDTH * EPD_HEIGHT / 8; i++) {
         epd_send_data(0xF0);  
     }
-    uart_putstring("r done.\r\n");
+    uart_putstring("new data done.\r\n");
     uart_putstring("Refreshing...\r\n");
+    epd_send_cmd(0X50);			//VCOM AND DATA INTERVAL SETTING
+    epd_send_data(0xb7);		//WBmode:VBDF 17|D7 VBDW 97 VBDB 57		WBRmode:VBDF F7 VBDW 77 VBDB 37  VBDR B7
+
     epd_send_cmd(0x12);
     delay_ms(100);
     epd_wait_busy();

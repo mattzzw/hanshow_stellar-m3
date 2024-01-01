@@ -32,7 +32,7 @@ int main(void)
 
     setup();
 
-
+    uart_putstring("EPD reset...\r\n");
     epd_reset();
     uart_putstring("EPD init...\r\n");
     epd_init();
