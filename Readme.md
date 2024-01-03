@@ -17,9 +17,8 @@ Opening the device revealed the following:
 - MCU: TI `MSP430G2755` 
 - Wireless chip: `A7106`
 - SPI flash: `AH1819 25VQ21BT` - 2Mbit/256kB
-- Display: 2,13" Hink-E0213A11-A1 212x104 - 
-  - Not sure if this is the B version V3, red/black/white, called ["2.13 e-paper (B) V3"](https://www.waveshare.com/w/upload/d/d8/2.13inch_e-Paper_%28B%29_V3_Specification.pdf)
-  - or if it's the D version, black/white, called ["2.13inch e-Paper (D)"](https://files.waveshare.com/upload/5/5b/2.13inch_e-Paper_%28D%29_Datasheet.pdf)
+- Display: 2,13" Holitech Hink-E0213A11-A1 212x104 
+  - Controller seems to be SSD1680 
 - Reed contact connected to P1.1 
 
 ![pcb top](pics/pcb_top.png)
@@ -31,7 +30,7 @@ Opening the device revealed the following:
 | P1.0 | 29   | EPD: Power (low active) |
 | P1.1 | 30   | reed switch to gnd, BSL TX  |
 | P1.2 | 31   | LED green |
-| P1.3 | 32   | Radio: power |
+| P1.3 | 32   | Radio: power (low active) |
 | P1.4 | 33   | Radio: RFIO2 |
 | P1.5 | 34   | Radio: RFIO1 |
 | P1.6 | 35   | Radio: RFDA |

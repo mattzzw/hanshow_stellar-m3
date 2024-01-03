@@ -13,6 +13,10 @@ void setup(void)
     WDTCTL = WDTPW + WDTHOLD;       // Stop the watchdog timer
     BCSCTL2 = 0;                    // DCOCLK --> MCLK + SCLK, ~1MHz
     
+    // switch off radio for now
+    P1DIR |= BIT3;
+    P1OUT |= BIT3;
+
     setup_rgb_led();
 
     // toggle_led('r');
@@ -22,7 +26,7 @@ void setup(void)
     setup_uart();
     //setup_spi();
     epd_setup_pins();
-
+ //   epd_reset();
 }
 
  

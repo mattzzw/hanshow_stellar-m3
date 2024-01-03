@@ -12,6 +12,7 @@
 #define EPD_RST_PORT    P4OUT
 #define EPD_BUS_PORT    P4IN  
 #define EPD_BS1_PORT    P4OUT
+#define EPD_HLT_PORT    P4OUT
 
 #define EPD_PWR_PIN BIT0
 #define EPD_DIN_PIN BIT4
@@ -21,6 +22,7 @@
 #define EPD_RST_PIN BIT7
 #define EPD_BUS_PIN BIT6
 #define EPD_BS1_PIN BIT5
+#define EPD_HLT_PIN BIT4
 
 void epd_setup_pins(void);
 void epd_reset(void);
@@ -28,7 +30,10 @@ void epd_init(void);
 void epd_send_cmd(const uint8_t);
 void epd_send_data(const uint8_t);
 void epd_write(const uint8_t);
+uint8_t epd_read(void);
 void epd_spi_write(const uint8_t);
+uint8_t epd_spi_read();
 void epd_wait_busy(void);
 void epd_clear_disp(void);
 void epd_sleep(void);
+void epd_update_display(void);
