@@ -1,9 +1,8 @@
 #include <msp430.h>
-#include <stdio.h>
 #include <stdint.h>
-#include "led.h"
-#include "spi.h"
-#include "uart.h"
+//#include "led.h"
+//#include "spi.h"
+//#include "uart.h"
 #include "tools.h"
 
 
@@ -11,14 +10,16 @@ void delay_ms(unsigned int d)
 {
     unsigned int i;
     for (i = 0; i < d; i++)
-        __delay_cycles(1090);       // Delay ~1ms
+        __delay_cycles(CYCLES_PER_MS);       // Delay ~1ms
 }
 
+/*  not used any more */
+/*
 void dump_flash(void)
 {
     u_int16_t chunk_size = 256;
     u_int8_t data[chunk_size];
-    uint8_t str[128];
+    char str[128];
     u_int16_t i;
     u_int32_t a;
 
@@ -35,5 +36,5 @@ void dump_flash(void)
             toggle_led('r');
         }
     uart_putstring("\r\n");
-
 }
+*/

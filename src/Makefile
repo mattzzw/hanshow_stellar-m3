@@ -11,12 +11,12 @@ CC      = $(MSPDIR)/bin/msp430-elf-gcc
 OBJCOPY = $(MSPDIR)/bin/msp430-elf-objcopy
 SIZE    = $(MSPDIR)/bin/msp430-elf-size
 
-CFLAGS  = -mmcu=msp430g2755 -I$(MSPDIR)/include -Iinclude 
+CFLAGS  = -mmcu=msp430g2755 -I$(MSPDIR)/include -Iinclude -Wall
 LDFLAGS = -mmcu=msp430g2755 -L$(MSPDIR)/include -Linclude
 
 all: main upload
 
-main: main.o uart.o led.o spi.o epd.o tools.o
+main: main.o uart.o led.o spi.o epd.o tools.o gfx.o
 
 hex: main
 	$(SIZE) $<

@@ -1,12 +1,16 @@
 #include <msp430.h>
 #include <stdint.h>
-#include <stdio.h>
 
 #include "tools.h"
-#include "uart.h"
+//#include "uart.h"
 #include "led.h"
 #include "spi.h"
 #include "epd.h"
+#include "gfx.h"
+
+
+static volatile uint8_t buf[EPD_WIDTH * EPD_HEIGHT / 8];
+
 
 void setup(void)
 {
@@ -23,7 +27,7 @@ void setup(void)
     // delay_ms(200);
     // toggle_led('r');
 
-    setup_uart();
+//    setup_uart();
     //setup_spi();
     epd_setup_pins();
  //   epd_reset();
@@ -32,20 +36,24 @@ void setup(void)
  
 int main(void)
 {
-    uint8_t str[128];
+    //uint8_t str[128];
 
     setup();
 
-    uart_putstring("EPD reset...\r\n");
     epd_reset();
-    uart_putstring("EPD init...\r\n");
     epd_init();
-    uart_putstring("Done.\r\nEPD clear disp...\r\n");
     epd_clear_disp();
-    uart_putstring("Done.\r\n");
-    uart_putstring("Done.\r\nEPD going asleep...\r\n");
+    gfx_fill_buf(buf, 1);
+
+    
+
+    for( int x = 0; x < 100; x++){
+            gfx_pixel(buf, x, x, 0);
+    }
+
+    epd_write_buf(buf);
+    epd_update_display();
     epd_sleep();
-    uart_putstring("Done.\r\nZzzzz....\r\n");
 
 
     while (1)

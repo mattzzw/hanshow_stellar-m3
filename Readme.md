@@ -111,8 +111,9 @@ The python script `reset_board.py` will toggle the DTR line to - well... reset t
 - [x] Serial debug output on P3.4 to 2nd RS-232 USB module
 - [x] Software UART on P1.1
 - [x] Flash access
-- [ ] EPD power up, boost conv running
-- [ ] EPD access
+- [x] EPD power up, boost conv running
+- [x] correct EPD config values
+- [x] EPD access, 1st simple framebuffer operations, setting single pixels
 - [ ] Wireless stuff
 
 

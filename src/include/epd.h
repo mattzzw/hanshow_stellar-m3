@@ -37,3 +37,4 @@ void epd_wait_busy(void);
 void epd_clear_disp(void);
 void epd_sleep(void);
 void epd_update_display(void);
+void epd_write_buf(volatile uint8_t *);

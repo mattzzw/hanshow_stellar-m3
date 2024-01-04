@@ -1,10 +1,10 @@
 #include <stdint.h>
-#include <stdio.h>  // FIXME Debug
 #include "msp430.h"
 #include "epd.h"
 #include "led.h"    // FIXME Debug
 #include "tools.h"
-#include "uart.h"   // FIXME Debug
+
+
 
 void epd_setup_pins(void)
 {
@@ -64,25 +64,11 @@ void epd_reset(void)
 void epd_init(void)
 {
 
-int i;
-uint8_t str[20];
-
-// SSD1675B init
+// SSD1680 init
 
     epd_send_cmd(0x12); // sw reset
     delay_ms(10);
 
-    epd_send_cmd(0x2f);
-    i=epd_read();
-    sprintf(str, "FLG: 0x%02x\n\r", i);
-    uart_putstring(str);
-
-/*
-    epd_send_cmd(0x01); // gate driver output
-    epd_send_data(0x27);
-    epd_send_data(0x01);
-    epd_send_data(0x00);
-*/
     epd_send_cmd(0x11); // data entry
     epd_send_data(0x03);
 
@@ -101,43 +87,47 @@ uint8_t str[20];
 
     // write image data
     epd_send_cmd(0x4e);  // RAM addr. x
-    epd_send_data(0x01);
+    epd_send_data(0x00);
+
     epd_send_cmd(0x4f);  // RAM addr. y
     epd_send_data(0x00);
     epd_send_data(0x00);
+    epd_send_data(0xfe);
+
+    epd_send_cmd(0x44);  // set ram x pos
+    epd_send_data(0x00);
+    epd_send_data((EPD_WIDTH -1)>>3); 
+    
+    epd_send_cmd(0x45);  // set ram y pos
+    epd_send_data(0x00);
+    epd_send_data(0x00);
+    epd_send_data((EPD_HEIGHT-1) & 0xff);
+    epd_send_data(EPD_HEIGHT>>8);
+
+    epd_send_cmd(0x01); // gate driver output
+    epd_send_data(EPD_HEIGHT + 1);
+    epd_send_data((EPD_HEIGHT + 1) >> 8);
+    epd_send_data(0x00);
+
+}
 
 
-    epd_send_cmd(0x22); // drive display
-    epd_send_data(0xf4);
 
-    epd_send_cmd(0x2f);
-
-    i=epd_read();
-    sprintf(str, "FLG: 0x%02x\n\r", i);
-    uart_putstring(str);
+void epd_update_display(void)
+{
+    epd_send_cmd(0x22); 
+    epd_send_data(0xc7);
 
     epd_send_cmd(0x20);
     delay_ms(1);
-    epd_wait_busy;
+    epd_wait_busy();
 
-    epd_send_cmd(0x2f);
-    i=epd_read();
-    sprintf(str, "FLG: 0x%02x\n\r", i);
-    uart_putstring(str);
-
-
-    epd_send_cmd(0x10);  // deep sleep
-    epd_send_data(0x01);
 }
 
 void epd_sleep(void) 
 {
-    epd_send_cmd(0x50);
-    epd_send_data(0xf7);
-    epd_send_cmd(0X02);//power off
-    epd_wait_busy();//waiting for the electronic paper IC to release the idle signal
-    epd_send_cmd(0X07);//deep sleep
-    epd_send_data(0xA5);
+    epd_send_cmd(0x10);  // deep sleep
+    epd_send_data(0x01);
 }
 
 
@@ -148,18 +138,14 @@ void epd_spi_write(const uint8_t data)
     for (bit = 0x80; bit > 0; bit >>= 1) {
         if (data & bit) {
             EPD_DIN_PORT |= EPD_DIN_PIN;  // Set MOSI high
-            //P1OUT |= BIT4;
         } else {
             EPD_DIN_PORT &= ~EPD_DIN_PIN; // Set MOSI low
-            //P1OUT &= ~BIT4;
         }
 
         EPD_CLK_PORT |= EPD_CLK_PIN;     // Set Clock high
-        //P1OUT|= BIT5;
-        __delay_cycles(5);
+        __delay_cycles(1);
         EPD_CLK_PORT &= ~EPD_CLK_PIN;      // Set Clock low
-        //P1OUT&=~BIT5;
-        __delay_cycles(5);
+        __delay_cycles(1);
 
     }
 }
@@ -174,15 +160,13 @@ uint8_t epd_spi_read()
 
     for(bit = 0x80; bit > 0; bit >>= 1){
         EPD_CLK_PORT |= EPD_CLK_PIN;     // Set Clock high
-        //P1OUT|= BIT5;
-        __delay_cycles(5);
+        __delay_cycles(1);
 
         if (P2IN & EPD_DIN_PIN){
             data |= bit; 
         }
         EPD_CLK_PORT &= ~EPD_CLK_PIN;      // Set Clock low
-        //P1OUT&=~BIT5;
-        __delay_cycles(5);
+        __delay_cycles(1);
     }
     // switch back to output
     P2DIR |= EPD_DIN_PIN;
@@ -228,8 +212,7 @@ void epd_send_data(const uint8_t data)
 
 void epd_wait_busy(void)
 {
-    while( (EPD_BUS_PORT & EPD_BUS_PIN) == 1){
-        uart_putc('.');
+    while( EPD_BUS_PORT & EPD_BUS_PIN ){
         delay_ms(100);
         }
     delay_ms(200);   
@@ -237,25 +220,46 @@ void epd_wait_busy(void)
 
 void epd_clear_disp(void)
 {
-    uart_putstring("EPD writing data...\r\n");
 
-    epd_send_cmd(0x10);           
+        // write image data
+    epd_send_cmd(0x4e);  // RAM addr. x
+    epd_send_data(0x00);
+
+    epd_send_cmd(0x4f);  // RAM addr. y
+    epd_send_data(0x00);
+    epd_send_data(0x00);
+    epd_send_data(0xfe);
+
+    epd_send_cmd(0x24);           
     for(int i = 0; i < EPD_WIDTH * EPD_HEIGHT / 8; i++) {
-        epd_send_data(0x0F);  
+        epd_send_data(0xff);  
     }  
-    uart_putstring("old data done.\r\n");
-    delay_ms(2);
-    epd_send_cmd(0x13);
+    epd_send_cmd(0x26);           
     for(int i = 0; i < EPD_WIDTH * EPD_HEIGHT / 8; i++) {
-        epd_send_data(0xF0);  
-    }
-    uart_putstring("new data done.\r\n");
-    uart_putstring("Refreshing...\r\n");
- //   epd_send_cmd(0X50);			//VCOM AND DATA INTERVAL SETTING
- //   epd_send_data(0xb7);		//WBmode:VBDF 17|D7 VBDW 97 VBDB 57		WBRmode:VBDF F7 VBDW 77 VBDB 37  VBDR B7
+        epd_send_data(0xff);  
+    }  
+    delay_ms(2);
+}
 
-    epd_send_cmd(0x12);
-    delay_ms(100);
-    epd_wait_busy();
 
+void epd_write_buf(volatile uint8_t *buf){
+
+        // write image data
+    epd_send_cmd(0x4e);  // RAM addr. x
+    epd_send_data(0x00);
+
+    epd_send_cmd(0x4f);  // RAM addr. y
+    epd_send_data(0x00);
+    epd_send_data(0x00);
+    epd_send_data(0xfe);
+    
+    epd_send_cmd(0x24);           
+    for(int i = 0; i < EPD_WIDTH * EPD_HEIGHT / 8; i++) {
+        epd_send_data(buf[i]);  
+    }  
+    epd_send_cmd(0x26);           
+    for(int i = 0; i < EPD_WIDTH * EPD_HEIGHT / 8; i++) {
+        epd_send_data(buf[i]);  
+    }  
+    delay_ms(2);
 }
