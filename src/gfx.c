@@ -2,18 +2,18 @@
 #include <string.h>
 #include "gfx.h"
 
-void gfx_render_str(volatile uint8_t *buf, const char bitmap[][8], const char *str, uint8_t x, uint8_t y, uint8_t c)
+void gfx_render_str(volatile uint8_t *buf, const char bitmap[][8], const char *str, uint8_t x, uint8_t y, uint8_t c, uint8_t zoom)
 {
 int n;
 int ch;
 
 for(n=0; n < strlen(str); n++){
     ch = str[n];
-    gfx_render_char(buf, bitmap[ch], x + (n*9), y, c);
+    gfx_render_char(buf, bitmap[ch], x + (n*zoom*(8+1)), y, c, zoom);
     }
 }
 
-void gfx_render_char(volatile uint8_t *buf, const char *bitmap, uint8_t x, uint8_t y, uint8_t c){
+void gfx_render_char(volatile uint8_t *buf, const char *bitmap, uint8_t x, uint8_t y, uint8_t c, uint8_t zoom){
     int xoffs,yoffs;
     int set;
     for (yoffs=0; yoffs < 8 ; yoffs++) {
@@ -23,7 +23,28 @@ void gfx_render_char(volatile uint8_t *buf, const char *bitmap, uint8_t x, uint8
                 c = 1;
                 else
                 c = 0;
-            gfx_pixel(buf, x+xoffs, y+yoffs, c);
+            if(zoom == 1){
+                gfx_pixel(buf, x+xoffs, y+yoffs, c);
+            }
+            if(zoom == 2){
+                gfx_pixel(buf, x+zoom*xoffs,   y+zoom*yoffs, c);
+                gfx_pixel(buf, x+zoom*xoffs+1, y+zoom*yoffs, c);
+                gfx_pixel(buf, x+zoom*xoffs,   y+zoom*yoffs+1, c);
+                gfx_pixel(buf, x+zoom*xoffs+1, y+zoom*yoffs+1, c);
+            }
+            if(zoom == 3){
+                gfx_pixel(buf, x+zoom*xoffs,   y+zoom*yoffs, c);
+                gfx_pixel(buf, x+zoom*xoffs+1, y+zoom*yoffs, c);
+                gfx_pixel(buf, x+zoom*xoffs+2, y+zoom*yoffs, c);
+                gfx_pixel(buf, x+zoom*xoffs,   y+zoom*yoffs+1, c);
+                gfx_pixel(buf, x+zoom*xoffs+1, y+zoom*yoffs+1, c);
+                gfx_pixel(buf, x+zoom*xoffs+2, y+zoom*yoffs+1, c);
+                gfx_pixel(buf, x+zoom*xoffs,   y+zoom*yoffs+2, c);
+                gfx_pixel(buf, x+zoom*xoffs+1, y+zoom*yoffs+2, c);
+                gfx_pixel(buf, x+zoom*xoffs+2, y+zoom*yoffs+2, c);
+ 
+            }
+
         }
     }
 }

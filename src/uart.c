@@ -16,7 +16,8 @@ void setup_uart(void)
   P1SEL  &= ~TXD;                             // P1.1 I/O
   P1OUT |= TXD;
 }
- 
+
+
 // Function Transmits Character from tx_byte 
 void uart_putc(uint8_t c)
 { 
