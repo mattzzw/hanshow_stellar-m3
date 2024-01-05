@@ -114,8 +114,13 @@ The python script `reset_board.py` will toggle the DTR line to - well... reset t
 - [x] EPD power up, boost conv running
 - [x] correct EPD config values
 - [x] EPD access, 1st simple framebuffer operations, setting single pixels
+- [x] 8x8 font rendering
+- [ ] SPI write
+- [ ] upload data via uart to flash
+- [ ] nicer bitmapped fonts
 - [ ] Wireless stuff
 
+![alive](pics/alive.jpg)
 
 ## Serial port
 
