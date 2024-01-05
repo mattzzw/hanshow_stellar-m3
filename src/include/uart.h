@@ -6,6 +6,7 @@
 #define BAUD_9600   80
   
 // Function Definitions
+
 void uart_putstring(const char *string);
 void uart_putc(uint8_t);
 void setup_uart(void);

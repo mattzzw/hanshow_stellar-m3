@@ -1,12 +1,12 @@
 #include <msp430.h>
 #include <stdint.h>
-
 #include "tools.h"
-//#include "uart.h"
+#include "uart.h"
 #include "led.h"
 #include "spi.h"
 #include "epd.h"
 #include "gfx.h"
+#include "font8x8_basic.h"
 
 
 static volatile uint8_t buf[EPD_WIDTH * EPD_HEIGHT / 8];
@@ -23,11 +23,7 @@ void setup(void)
 
     setup_rgb_led();
 
-    // toggle_led('r');
-    // delay_ms(200);
-    // toggle_led('r');
-
-//    setup_uart();
+    setup_uart();
     //setup_spi();
     epd_setup_pins();
     epd_reset();
@@ -44,6 +40,8 @@ int main(void)
 
     toggle_led('b');
 
+    
+
 //    epd_clear_disp();
 //    epd_update_display();
 
@@ -51,10 +49,14 @@ int main(void)
 
     gfx_fill_buf(buf, 0);
 
-    for( int x = 0; x < 100; x++){
-            gfx_pixel(buf, x, x, 1);
-    }
-    epd_wait_busy();
+    // for( int x = 30; x < 100; x++){
+    //         gfx_pixel(buf, x, x, 1);
+    // }
+    // epd_wait_busy();
+
+    //gfx_render_char(buf, font8x8_basic['X'], 30, 90, 1);
+
+    gfx_render_str(buf, font8x8_basic, "Hello, I'm a display.", 0, GFX_BUF_HEIGHT-10, 1);
 
     epd_write_buf(buf);
     epd_update_display();

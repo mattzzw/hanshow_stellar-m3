@@ -70,6 +70,12 @@ void epd_init(void)
     epd_send_cmd(0x12); // sw reset
     delay_ms(10);
 
+    epd_send_cmd(0x74);  // set analog ctrl
+    epd_send_data(0x54);
+
+    epd_send_cmd(0x7e);  // set digital ctrl
+    epd_send_data(0x3b);
+
     epd_send_cmd(0x11); // data entry
     epd_send_data(0x03);
 
@@ -106,8 +112,8 @@ void epd_init(void)
     epd_send_data(EPD_HEIGHT>>8);
 
     epd_send_cmd(0x01); // gate driver output
-    epd_send_data((EPD_HEIGHT - 1) & 0xff);
-    epd_send_data((EPD_HEIGHT - 1) >> 8);
+    epd_send_data((EPD_HEIGHT + 1) & 0xff);
+    epd_send_data((EPD_HEIGHT + 1) >> 8);
     epd_send_data(0x00);
 
 }
@@ -144,9 +150,9 @@ void epd_spi_write(const uint8_t data)
         }
 
         EPD_CLK_PORT |= EPD_CLK_PIN;     // Set Clock high
-        __delay_cycles(1);
+       // __delay_cycles(1);
         EPD_CLK_PORT &= ~EPD_CLK_PIN;      // Set Clock low
-        __delay_cycles(1);
+       // __delay_cycles(1);
 
     }
 }
@@ -161,13 +167,13 @@ uint8_t epd_spi_read()
 
     for(bit = 0x80; bit > 0; bit >>= 1){
         EPD_CLK_PORT |= EPD_CLK_PIN;     // Set Clock high
-        __delay_cycles(1);
+       // __delay_cycles(1);
 
         if (P2IN & EPD_DIN_PIN){
             data |= bit; 
         }
         EPD_CLK_PORT &= ~EPD_CLK_PIN;      // Set Clock low
-        __delay_cycles(1);
+       // __delay_cycles(1);
     }
     // switch back to output
     P2DIR |= EPD_DIN_PIN;
