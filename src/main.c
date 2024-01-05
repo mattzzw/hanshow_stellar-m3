@@ -30,7 +30,9 @@ void setup(void)
 //    setup_uart();
     //setup_spi();
     epd_setup_pins();
- //   epd_reset();
+    epd_reset();
+    epd_init();
+
 }
 
  
@@ -40,19 +42,24 @@ int main(void)
 
     setup();
 
-    epd_reset();
-    epd_init();
-    epd_clear_disp();
-    gfx_fill_buf(buf, 1);
+    toggle_led('b');
 
-    
+//    epd_clear_disp();
+//    epd_update_display();
+
+
+
+    gfx_fill_buf(buf, 0);
 
     for( int x = 0; x < 100; x++){
-            gfx_pixel(buf, x, x, 0);
+            gfx_pixel(buf, x, x, 1);
     }
+    epd_wait_busy();
 
     epd_write_buf(buf);
     epd_update_display();
+    toggle_led('b');
+
     epd_sleep();
 
 

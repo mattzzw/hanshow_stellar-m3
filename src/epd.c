@@ -50,12 +50,12 @@ void epd_reset(void)
 
     // 4 wire bus
     EPD_BS1_PORT &= ~EPD_BS1_PIN;
-    delay_ms(5);
+    delay_ms(10);
     // reset
     EPD_RST_PORT |= EPD_RST_PIN;
     delay_ms(200);
     EPD_RST_PORT &= ~EPD_RST_PIN;  
-    delay_ms(10);
+    delay_ms(20);
     EPD_RST_PORT |= EPD_RST_PIN;
     delay_ms(200);
 
@@ -66,6 +66,7 @@ void epd_init(void)
 
 // SSD1680 init
 
+    delay_ms(10);
     epd_send_cmd(0x12); // sw reset
     delay_ms(10);
 
@@ -94,19 +95,19 @@ void epd_init(void)
     epd_send_data(0x00);
     epd_send_data(0xfe);
 
-    epd_send_cmd(0x44);  // set ram x pos
+    epd_send_cmd(0x44);  // set ram x start/stop pos
     epd_send_data(0x00);
     epd_send_data((EPD_WIDTH -1)>>3); 
     
-    epd_send_cmd(0x45);  // set ram y pos
+    epd_send_cmd(0x45);  // set ram y start/stop pos
     epd_send_data(0x00);
     epd_send_data(0x00);
     epd_send_data((EPD_HEIGHT-1) & 0xff);
     epd_send_data(EPD_HEIGHT>>8);
 
     epd_send_cmd(0x01); // gate driver output
-    epd_send_data(EPD_HEIGHT + 1);
-    epd_send_data((EPD_HEIGHT + 1) >> 8);
+    epd_send_data((EPD_HEIGHT - 1) & 0xff);
+    epd_send_data((EPD_HEIGHT - 1) >> 8);
     epd_send_data(0x00);
 
 }
@@ -116,7 +117,7 @@ void epd_init(void)
 void epd_update_display(void)
 {
     epd_send_cmd(0x22); 
-    epd_send_data(0xc7);
+    epd_send_data(0xc7);  // c7
 
     epd_send_cmd(0x20);
     delay_ms(1);
@@ -252,7 +253,7 @@ void epd_write_buf(volatile uint8_t *buf){
     epd_send_data(0x00);
     epd_send_data(0x00);
     epd_send_data(0xfe);
-    
+
     epd_send_cmd(0x24);           
     for(int i = 0; i < EPD_WIDTH * EPD_HEIGHT / 8; i++) {
         epd_send_data(buf[i]);  
