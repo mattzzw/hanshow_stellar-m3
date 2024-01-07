@@ -24,7 +24,7 @@ hex: main
 
 upload: hex
 	$(MSPDEBUG) -d $(PROG_PORT) rom-bsl --bsl-entry-sequence Dr,R,r,R,r,d "prog main"
-	./reset_board.py -d $(PROG_PORT)
+#	./reset_board.py -d $(PROG_PORT)
 
 debug: 
 	$(MSPDEBUG) -d $(PROG_PORT) rom-bsl --bsl-entry-sequence Dr,R,r,R,r,d 
