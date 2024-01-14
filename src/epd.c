@@ -76,6 +76,17 @@ void epd_init(void)
     epd_send_cmd(0x7e);  // set digital ctrl
     epd_send_data(0x3b);
 
+    epd_send_cmd(0x2b);  // VCOM ctrl
+    epd_send_data(0x04);
+    epd_send_data(0x63);
+
+    epd_send_cmd(0x0c);  // booster soft start ctrl.
+    epd_send_data(0x8b);
+    epd_send_data(0x9c);
+    epd_send_data(0x96);
+    epd_send_data(0x0f);
+
+
     epd_send_cmd(0x11); // data entry
     epd_send_data(0x03);
 
@@ -91,6 +102,9 @@ void epd_init(void)
     epd_send_data(0x41);
     epd_send_data(0x00);
     epd_send_data(0x32);
+
+    epd_send_cmd(0x18);  // internal temp sensor
+    epd_send_data(0x80);
 
     // write image data
     epd_send_cmd(0x4e);  // RAM addr. x
@@ -123,7 +137,7 @@ void epd_init(void)
 void epd_update_display(void)
 {
     epd_send_cmd(0x22); 
-    epd_send_data(0xc7);  // c7
+    epd_send_data(0xc7);  // 0xc7 or 0xf7? 
 
     epd_send_cmd(0x20);
     delay_ms(1);
