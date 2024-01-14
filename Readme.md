@@ -3,11 +3,11 @@
 This is about getting you own baremetal code running on two very similar e-paper based ESLs:
 
 ![M3](pics/front.jpg)
-![ST3](pics/st3-front.jpg)
+![S3T](pics/st3-front.jpg)
 
 - [Hanshow Stallar M3@](Readme-m3.md) - This is where it started, using serial Boot Strap Loader access.
 
-- [Hanshow Stellar ST3](Readme-st3.md) - Based on the findings above, using spy-bi-wire/JTAG access.
+- [Hanshow Stellar S3T@](Readme-s3t.md) - Based on the findings above, using spy-bi-wire/JTAG access.
 
 ## Open points / unclear
 
