@@ -136,7 +136,7 @@ void epd_init(void)
 void epd_update_display(void)
 {
     epd_send_cmd(0x22); 
-    epd_send_data(0xc4);  // 0xc7 or 0xf7? 
+    epd_send_data(0xfc);  // 0xc7 or 0xf7 or 0xc4? 0xfc seems most robust. 
 
     epd_send_cmd(0x20);
     delay_ms(1);

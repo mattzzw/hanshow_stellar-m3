@@ -2,7 +2,7 @@
 # Hacking away on the Hanshow Stellar-S3T@ Electronic Shelf Label
 
 
-After [hacking the Hanshow Stellar M3@](https://github.com/mattzzw/hanshow_stellar-m3) this device seems to be quite similar.
+After [hacking the Hanshow Stellar M3@](Readme-m3.md) this device seems to be quite similar.
 
 
 ![frontside](pics/st3-front.jpg)
