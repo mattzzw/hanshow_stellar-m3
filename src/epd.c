@@ -135,6 +135,26 @@ void epd_init(void)
 
 void epd_update_display(void)
 {
+
+/*
+Cmd 0x22,
+Display Update Control 2
+
+    +----------------- 1: enable clock
+    | +--------------- 1: enable analog
+    | | +------------- 1: load temp value
+    | | | +----------- 1: load LUT with display mode 1
+    | | | |  +-------- 1: load LUT with display mode 2 (with bit 4)
+    | | | |  | +------ 1: display mode 2, 0: display mode 1 
+    | | | |  | | +---- 1: disable analog
+    | | | |  | | | +-- 1: disable clock
+    | | | |  | | | |
+Bit 7 6 5 4  3 2 1 0 
+-------------------------------------------
+    1 1 1 1  0 1 1 1 : 0xf7
+    1 1 1 1  1 1 0 0 : 0xfc
+    1 1 0 0  0 1 1 1 : 0xc7
+*/
     epd_send_cmd(0x22); 
     epd_send_data(0xfc);  // 0xc7 or 0xf7 or 0xc4? 0xfc seems most robust. 
 
