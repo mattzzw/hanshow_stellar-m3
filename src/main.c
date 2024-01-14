@@ -11,7 +11,7 @@
 #include "font8x8_basic.h"
 
 
-static volatile uint8_t buf[EPD_WIDTH * EPD_HEIGHT / 8];
+static volatile uint8_t buf[(uint16_t)EPD_WIDTH * EPD_HEIGHT / 8];
 
 void setup(void)
 {
@@ -35,7 +35,8 @@ void setup(void)
  
 int main(void)
 {
-    char str[128];
+
+    //char str[128];
 
     /*
     uint8_t rbuf[10];
@@ -44,7 +45,13 @@ int main(void)
 
     uint8_t i;
 */
-    uint8_t t1, t2, i;
+    //uint8_t t1, t2, i;
+
+    set_rgb_led(1, 0, 0);
+    delay_ms(5);
+    set_rgb_led(0, 0, 0);
+
+
     setup();
 
     gfx_fill_buf(buf, 0);
@@ -53,10 +60,21 @@ int main(void)
     epd_update_display();
     epd_sleep();
 
+
+    set_rgb_led(1, 0, 0);
+    delay_ms(100);
+    set_rgb_led(0, 1, 0);
+    delay_ms(100);
+    set_rgb_led(0, 0, 1);
+    delay_ms(100);
+    set_rgb_led(0, 0, 0);
+    
     while (1)
     {    
-        toggle_led('r');
-        delay_ms(500);
+        set_rgb_led(1, 0, 0);
+        delay_ms(5);
+        set_rgb_led(0, 0, 0);
+        delay_ms(995);
     }
 
     set_rgb_led(1,1,1);

@@ -20,7 +20,7 @@ Opening the device revealed the following:
 - Wireless chip: `A7106`
 - SPI flash: `AH1819 25VQ21BT` - 2Mbit/256kB
 - Display Module: [Good Display 1.54 inch e-paper module](https://www.good-display.com/product/1.54-inch-e-paper-display-module-partial-refresh-E-ink-screen,-GDEH0154D67-208.html) partial refresh E-ink module, [GDEH0154D67](https://v4.cecdn.yun300.cn/100001_1909185148/GDEH0154D67-0111.pdf)
-  - 200x200  Holitech Hink-E0154A07-A1 display
+  - 200x200  Holitech Hink-E0154A07-A1 B/W/R display
   - Controller seems to be [SSD1681](https://files.seeedstudio.com/wiki/Other_Display/154-epaper/IC%20Driver%20SSD1681.pdf)
 
 
@@ -39,7 +39,7 @@ Seems to be the same pinout as the M3 so far.
 
 ## Accessing the MCU
  
-This time a cheap TI Launchpad board was used to get access to the MCU, utilizing the 'spy-by-wire' interface.
+This time a cheap TI Launchpad board was used to get access to the MCU, utilizing the 'spy-bi-wire' interface.
 Hook up Vcc, Gnc, RSTn and Test to the four pads labeled accordingly.
 Luckily the JTAG fuse was not blown so the existing firmware can be saved for further analysis.
 
@@ -53,3 +53,7 @@ A quick and easy disassembly can be done via
 
 However, using Ghidra is much more convenient.
 
+## Compiling & uploading
+
+`make main` to just compile
+`make upload-sbw` to compile and upload
