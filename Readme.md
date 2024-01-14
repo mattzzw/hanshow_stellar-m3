@@ -1,4 +1,4 @@
-# Hacking away on Hanshow Electronic Shelf Lables (baseed on TMS430 MCU)
+# Hacking away on Hanshow Electronic Shelf Lables (baseed on the TI MSP430G2775 MCU)
 
 This is about getting you own baremetal code running on two very similar e-paper based ESLs:
 
